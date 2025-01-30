@@ -1,36 +1,35 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import Features from './components/Features'; // Cards Section
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import GratitudeJournal from './pages/GratitudeJournal';
-import PomodoroTimer from './pages/PomodoroTimer';
-import ToDo from './pages/ToDo';
-import Meditation from './pages/Meditation';
-import Reading from './pages/Reading';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import GratitudeJournal from "./pages/GratitudeJournal";
+import PomodoroTimer from "./pages/PomodoroTimer";
+import Reading from "./pages/Reading";
+import Meditation from "./pages/Meditation";
+import ToDo from "./pages/ToDo";
+import Community from "./pages/Community";
+import Progress from "./pages/Progress";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <Router>
       <Navbar />
-      <HeroSection />
-      <Switch>
-        <Route path="/" exact>
-          <Features /> {/* Cards Section after Hero */}
-        </Route>
-        <Route path="/signup" component={Signup} />
-        <Route path="/login" component={Login} />
-        <Route path="/gratitude-journal" component={GratitudeJournal} />
-        <Route path="/pomodoro-timer" component={PomodoroTimer} />
-        <Route path="/to-do" component={ToDo} />
-        <Route path="/meditation" component={Meditation} />
-        <Route path="/reading" component={Reading} />
-        <Route path="*">
-          <h1 className="text-center mt-10">404 - Page Not Found</h1>
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/gratitude-journal" element={<GratitudeJournal />} />
+        <Route path="/pomodoro-timer" element={<PomodoroTimer />} />
+        <Route path="/reading" element={<Reading />} />
+        <Route path="/meditation" element={<Meditation />} />
+        <Route path="/todo" element={<ToDo />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/progress" element={<Progress />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
     </Router>
   );
 }

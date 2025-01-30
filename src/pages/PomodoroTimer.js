@@ -15,9 +15,6 @@ const PomodoroTimer = () => {
   const [timerName, setTimerName] = useState('Pomodoro Timer');
   const [coins, setCoins] = useState(0);
 
-  // State to store the history
-  const [history, setHistory] = useState([]);
-
   useEffect(() => {
     if (audio) {
       isActive && !isPaused ? audio.play() : audio.pause();
@@ -69,9 +66,7 @@ const PomodoroTimer = () => {
       time: date.toLocaleTimeString(),
       coins,
     };
-    setHistory((prevHistory) => [...prevHistory, progressData]); // Save progress in history
-
-    // Navigate to progress page
+    // Save progress in history
     navigate('/progress', { state: { progressData } });
   };
 
@@ -100,7 +95,7 @@ const PomodoroTimer = () => {
 
       return () => clearInterval(interval);
     }
-  }, [isActive, isPaused, timer]);
+  }, [isActive, isPaused, timer, coins, handleProgress]);
 
   const minutes = Math.floor(timer / 60);
   const seconds = timer % 60;

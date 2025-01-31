@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PomodoroTimer = () => {
   const navigate = useNavigate();
 
-  const [workTime, setWorkTime] = useState(25 * 60); // Default to 25 minutes for work
-  const [breakTime, setBreakTime] = useState(5 * 60); // Default to 5 minutes for break
-  const [timer, setTimer] = useState(workTime); // Timer starts with work time
+  const [workTime, setWorkTime] = useState(25 * 60); // Default work time
+  const [breakTime, setBreakTime] = useState(5 * 60); // Default break time
+  const [timer, setTimer] = useState(workTime);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
-  const [workDescription, setWorkDescription] = useState('');
-  const [musicUrl, setMusicUrl] = useState('');
+  const [workDescription, setWorkDescription] = useState("");
+  const [musicUrl, setMusicUrl] = useState("");
   const [audio, setAudio] = useState(null);
-  const [timerName, setTimerName] = useState('Pomodoro Timer');
+  const [timerName, setTimerName] = useState("Pomodoro Timer");
   const [coins, setCoins] = useState(0);
+
+  const [history, setHistory] = useState([]); // Pomodoro history
+  const [focusMode, setFocusMode] = useState(false); // Focus mode
+  const [darkMode, setDarkMode] = useState(false); // Dark mode toggle
+  const [showAnalytics, setShowAnalytics] = useState(false); // Show analytics
+  const [progress, setProgress] = useState(0); // Progress bar percentage
 
   useEffect(() => {
     if (audio) {
@@ -22,43 +28,35 @@ const PomodoroTimer = () => {
   }, [audio, isActive, isPaused]);
 
   const handleStartStop = () => {
-    if (isActive) {
-      setIsActive(false);
-      setIsPaused(true);
+    setIsActive(!isActive);
+    setIsPaused(!isPaused);
+    if (!isActive && !isPaused && focusMode) {
+      document.body.style.backgroundColor = "#282c34"; // Dark mode
     } else {
-      setIsActive(true);
-      setIsPaused(false);
+      document.body.style.backgroundColor = ""; // Default background
     }
   };
 
   const handleReset = () => {
     setIsActive(false);
     setIsPaused(true);
-    setTimer(workTime); // Reset timer to work time
-    setTimerName('Pomodoro Timer');
-    if (audio) {
-      audio.pause();
-    }
+    setTimer(workTime);
+    setTimerName("Pomodoro Timer");
+    if (audio) audio.pause();
+    setProgress(0);
   };
 
-  const handleMusicUrlChange = (event) => {
-    setMusicUrl(event.target.value);
-  };
+  const handleMusicUrlChange = (event) => setMusicUrl(event.target.value);
 
   const handleStartMusic = () => {
     const newAudio = new Audio(musicUrl);
     setAudio(newAudio);
-    if (newAudio) {
-      newAudio.play();
-    }
+    if (newAudio) newAudio.play();
   };
 
-  const handleWorkDescriptionChange = (event) => {
-    setWorkDescription(event.target.value);
-  };
+  const handleWorkDescriptionChange = (event) => setWorkDescription(event.target.value);
 
-  // Progress function to save data
-  const handleProgress = () => {
+  const handleProgress = useCallback(() => {
     const date = new Date();
     const progressData = {
       description: workDescription,
@@ -66,121 +64,146 @@ const PomodoroTimer = () => {
       time: date.toLocaleTimeString(),
       coins,
     };
-    // Save progress in history
-    navigate('/progress', { state: { progressData } });
-  };
-
-  const handleCustomWorkTimeChange = (event) => {
-    setWorkTime(Number(event.target.value) * 60); // Convert to seconds
-    setTimer(Number(event.target.value) * 60);
-  };
-
-  const handleCustomBreakTimeChange = (event) => {
-    setBreakTime(Number(event.target.value) * 60); // Convert to seconds
-  };
+    setHistory((prevHistory) => [...prevHistory, progressData]); // Add to history
+    navigate("/progress", { state: { progressData } });
+  }, [workDescription, coins, navigate]);
 
   useEffect(() => {
     if (isActive && !isPaused) {
       const interval = setInterval(() => {
         if (timer > 0) {
           setTimer(timer - 1);
+          setProgress(((workTime - timer) / workTime) * 100); // Update progress bar
         } else {
           clearInterval(interval);
           setIsActive(false);
           setIsPaused(true);
-          setCoins(coins + 1); // Give coin for completing the task
-          handleProgress(); // Call progress when timer finishes
+          setCoins(coins + 1);
+          handleProgress();
         }
       }, 1000);
-
       return () => clearInterval(interval);
     }
   }, [isActive, isPaused, timer, coins, handleProgress]);
 
+  const handleBreakTimeChange = (event) => setBreakTime(event.target.value * 60);
+  const handleWorkTimeChange = (event) => setWorkTime(event.target.value * 60);
+
   const minutes = Math.floor(timer / 60);
   const seconds = timer % 60;
 
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
-      <h1 className="text-4xl font-bold text-center">{timerName}</h1>
+    <div className={`flex min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}>
+      {/* Left Section: Music & Report */}
+      <div className="w-1/2 flex flex-col items-center justify-center p-6 border-r border-gray-300">
+        <h1 className="text-4xl font-bold">Pomodoro Timer</h1>
 
-      <div className="mt-8">
-        <input
-          type="text"
-          placeholder="Enter work description"
-          value={workDescription}
-          onChange={handleWorkDescriptionChange}
-          className="mb-4 p-2 border border-gray-300 rounded"
-        />
-      </div>
+        <div className="mt-6">
+          <input
+            type="text"
+            placeholder="Enter Music URL"
+            value={musicUrl}
+            onChange={handleMusicUrlChange}
+            className="p-3 border border-gray-300 rounded-md w-80" // Increased width and padding
+          />
+          <button onClick={handleStartMusic} className="bg-blue-600 text-white px-6 py-3 rounded-md ml-2 shadow-md">
+            Play Music
+          </button>
+        </div>
 
-      <div className="text-3xl font-semibold mt-4">
-        {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-      </div>
-
-      <div className="mt-4 flex justify-center space-x-4">
-        <button
-          onClick={handleStartStop}
-          className="bg-green-500 text-white px-6 py-2 rounded"
-        >
-          {isActive ? 'Pause' : 'Start'}
+        {/* Report Button */}
+        <button onClick={() => navigate("/progress")} className="mt-6 bg-purple-600 text-white px-6 py-3 rounded-md shadow-md">
+          View Report
         </button>
-        <button
-          onClick={handleReset}
-          className="bg-red-500 text-white px-6 py-2 rounded"
-        >
-          Reset
+
+        {/* Dark Mode Toggle */}
+        <button onClick={toggleDarkMode} className="mt-6 bg-yellow-600 text-white px-6 py-3 rounded-md shadow-md">
+          Toggle Dark Mode
         </button>
       </div>
 
-      <div className="mt-4 flex justify-center space-x-4">
-        <input
-          type="text"
-          placeholder="Enter Music URL"
-          value={musicUrl}
-          onChange={handleMusicUrlChange}
-          className="p-2 border border-gray-300 rounded"
-        />
-        <button
-          onClick={handleStartMusic}
-          className="bg-blue-500 text-white px-6 py-2 rounded"
-        >
-          Play Music
-        </button>
-      </div>
-
-      {/* Customizable Timer Settings */}
-      <div className="mt-8">
-        <div>
-          <label className="mr-4 text-lg">Work Time (minutes):</label>
+      {/* Right Section: Timer, Tasks & Analytics */}
+      <div className="w-1/2 flex flex-col items-center justify-center p-6">
+        {/* Work Timer Input */}
+        <div className="flex flex-col items-center">
+          <label htmlFor="workTime" className="mb-2">Work Time (min):</label>
           <input
             type="number"
-            min="1"
+            id="workTime"
             value={workTime / 60}
-            onChange={handleCustomWorkTimeChange}
-            className="p-2 border border-gray-300 rounded"
+            onChange={handleWorkTimeChange}
+            className="p-3 border border-gray-300 rounded-md w-1/3" // Increased width and padding
           />
         </div>
 
-        <div className="mt-4">
-          <label className="mr-4 text-lg">Break Time (minutes):</label>
+        {/* Break Timer Input */}
+        <div className="flex flex-col items-center mt-4">
+          <label htmlFor="breakTime" className="mb-2">Break Time (min):</label>
           <input
             type="number"
-            min="1"
+            id="breakTime"
             value={breakTime / 60}
-            onChange={handleCustomBreakTimeChange}
-            className="p-2 border border-gray-300 rounded"
+            onChange={handleBreakTimeChange}
+            className="p-3 border border-gray-300 rounded-md w-1/3" // Increased width and padding
           />
         </div>
-      </div>
 
-      <div className="mt-6 flex justify-center">
+        {/* Timer Display */}
+        <div className="text-3xl font-semibold mt-4">{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</div>
+
+        {/* Timer Controls */}
+        <div className="mt-4 flex space-x-4">
+          <button onClick={handleStartStop} className="bg-green-600 text-white px-6 py-3 rounded-md shadow-md">
+            {isActive ? "Pause" : "Start"}
+          </button>
+          <button onClick={handleReset} className="bg-red-600 text-white px-6 py-3 rounded-md shadow-md">
+            Reset
+          </button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full mt-6 bg-gray-300 rounded-full h-2">
+          <div
+            className="bg-blue-600 h-2 rounded-full"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+
+        {/* Focus Mode */}
+        <div className="mt-6">
+          <button
+            onClick={() => setFocusMode(!focusMode)}
+            className={`${
+              focusMode ? "bg-red-600" : "bg-yellow-600"
+            } text-white px-6 py-3 rounded-md shadow-md`}
+          >
+            {focusMode ? "Exit Focus Mode" : "Start Focus Mode"}
+          </button>
+        </div>
+
+        {/* Show Analytics */}
         <button
-          onClick={handleProgress}
-          className="bg-yellow-500 text-white px-6 py-2 rounded"
+          onClick={() => setShowAnalytics(!showAnalytics)}
+          className="mt-6 bg-purple-600 text-white px-6 py-3 rounded-md shadow-md"
         >
-          Complete Task (Earn Coin)
+          {showAnalytics ? "Hide Analytics" : "Show Analytics"}
         </button>
+
+        {/* Analytics Section */}
+        {showAnalytics && (
+          <div className="mt-6 bg-gray-200 p-4 rounded-md shadow-md">
+            <h2 className="text-xl font-semibold">Pomodoro Analytics</h2>
+            <ul>
+              {history.map((item, index) => (
+                <li key={index} className="mt-2">
+                  {item.date} {item.time} - {item.description} (Coins Earned: {item.coins})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

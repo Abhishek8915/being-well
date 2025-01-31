@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FaEdit, FaTrash, FaQuoteLeft } from "react-icons/fa";
+import { CSVLink } from "react-csv";  // Adding CSV export functionality
 
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -72,6 +73,12 @@ const GratitudeJournal = () => {
       console.error("Error deleting entry:", error);
     }
   };
+
+  // Prepare data for CSV export
+  const csvData = entries.map(entry => ({
+    Entry: entry.entry,
+    Date: entry.date,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white">
@@ -147,9 +154,21 @@ const GratitudeJournal = () => {
             <p className="text-gray-400 text-center mt-4">No gratitude entries yet.</p>
           )}
         </motion.div>
+
+        {/* Export to CSV */}
+        <div className="mt-6 text-center">
+          <CSVLink
+            data={csvData}
+            filename="gratitude_entries.csv"
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+          >
+            Export to CSV
+          </CSVLink>
+        </div>
       </motion.div>
     </div>
   );
 };
 
 export default GratitudeJournal;
+

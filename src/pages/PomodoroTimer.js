@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
+
+
 const PomodoroTimer = () => {
   const navigate = useNavigate();
 
@@ -113,8 +115,8 @@ const PomodoroTimer = () => {
       {/* Left Section */}
       <div className="w-full md:w-1/2 flex flex-col items-center justify-between p-6 border-r border-gray-300 space-y-4">
         <div className="py-3 flex flex-col justify-center space-y-20">
-          <h1 className=" text-6xl font-extrabold text-center font-[Roboto] text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-blue-500">
-            Pomodoro Timer
+          <h1 className=" text-6xl font-extrabold text-center font-[Bebas+Neue] text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-blue-500">
+            Promodoro Timer 🍵
           </h1>
         
 
@@ -147,10 +149,10 @@ const PomodoroTimer = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center justify-between p-6 space-y-6">
         {/* Work Time and Break Time Inputs */}
         <div className="flex space-x-6 w-full justify-center">
-          <div className="flex flex-col items-center space-y-2">
+          <div className="w-1/2 flex flex-col items-center space-y-2">
             <button 
               onClick={() => document.getElementById('workTime').focus()}
-              className="flex items-center space-x-3 bg-green-400 text-gray-800 py-3 rounded-lg shadow-lg hover:bg-[#8bc34a] transition-all duration-300 font-['Poppins']"
+              className="flex items-center space-x-3 bg-[#2563eb] text-gray-800 px-6 py-3 rounded-lg shadow-lg hover:bg-[#8bc34a] transition-all duration-300 font-['Poppins']"
             >
               <i className="fas fa-briefcase text-xl"></i>
               <span className="font-semibold">Work Time:</span>
@@ -164,11 +166,12 @@ const PomodoroTimer = () => {
               <span className="text-sm">min</span>
             </button>
           </div>
+          
 
           <div className="flex flex-col items-center space-y-2">
             <button
               onClick={() => document.getElementById('breakTime').focus()}
-              className="flex items-center space-x-3 bg-green-400 text-gray-800 px-6 py-3 rounded-lg shadow-lg hover:bg-[#8bc34a] transition-all duration-300 font-['Poppins']"
+              className="flex items-center space-x-3 bg-[#2563eb] text-gray-800 px-6 py-3 rounded-lg shadow-lg hover:bg-[#8bc34a] transition-all duration-300 font-['Poppins']"
             >
               <i className="fas fa-coffee text-xl"></i>
               <span className="font-semibold">Break Time:</span>
@@ -187,7 +190,7 @@ const PomodoroTimer = () => {
         {/* Timer Display */}
         <div className="flex flex-col items-center">
           <div className="text-7xl font-digital mt-6 tracking-wider bg-gray-800 text-green-400 px-8 py-4 rounded-lg shadow-inner" style={{
-            fontFamily: "'AlarmClock',sans-serif",
+            fontFamily: "Oxanium",
             textShadow: "0 0 5px rgba(74, 222, 128, 0.5)"
           }}>
             {minutes}:{seconds < 10 ? `0${seconds}` : seconds}

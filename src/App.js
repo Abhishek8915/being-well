@@ -14,6 +14,7 @@ import Progress from "./pages/Progress";
 import Profile from "./pages/Profile";
 import MeditationGuide from "./pages/MeditationGuide";
 import TodoApp from "./pages/TodoApp";
+import HabitReplacer from "./components/HabitReplacer";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/reading" element={<Reading />} />
         <Route path="/meditation" element={<Meditation />} />
         <Route path="/meditation-guide" element={<MeditationGuide />} />
+        <Route path="/habit-replacer" element={<HabitReplacer />} />
         <Route path="/todo" element={<TodoApp />} />
         <Route path="/community" element={<Community />} />
         <Route path="/progress" element={<Progress />} />

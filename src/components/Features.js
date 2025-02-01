@@ -8,6 +8,7 @@ const features = [
   { name: "To-Do", path: "/to-do", color: "bg-green-500" },
   { name: "Meditation", path: "/meditation", color: "bg-yellow-500" },
   { name: "Reading", path: "/reading", color: "bg-purple-500" },
+  { name: "Habit Replacer", path: "/habit-replacer", color: "bg-pink-500" },
 ];
 
 const Features = () => {

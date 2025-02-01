@@ -17,6 +17,7 @@ const Home = () => {
         <FeatureCard title="Reading" link="/reading" />
         <FeatureCard title="Meditation" link="/meditation" />
         <FeatureCard title="To-Do" link="/todo" />
+        <FeatureCard title="Habit Replacer" link="/habit-replacer" />
       </section>
     </div>
   );

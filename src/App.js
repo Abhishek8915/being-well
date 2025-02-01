@@ -9,13 +9,14 @@ import PomodoroTimer from "./pages/PomodoroTimer";
 import ReportView from "./pages/ReportView";
 import Reading from "./pages/Reading";
 import Meditation from "./pages/Meditation";
-import Community from "./pages/Community";
-import Progress from "./pages/Progress";
+import CommunityPage from "./pages/CommunityPage";
+import Progress from "./components/Progress";
 import Profile from "./pages/Profile";
 import MeditationGuide from "./pages/MeditationGuide";
 import TodoApp from "./pages/TodoApp";
 import HabitReplacer from "./components/HabitReplacer";
 import Overview from "./pages/overview";
+import Challenges from "./pages/Challenges";
 
 function App() {
   return (
@@ -33,10 +34,11 @@ function App() {
         <Route path="/meditation-guide" element={<MeditationGuide />} />
         <Route path="/habit-replacer" element={<HabitReplacer />} />
         <Route path="/todo" element={<TodoApp />} />
-        <Route path="/community" element={<Community />} />
+        <Route path="/community" element={<CommunityPage />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/overview" element={<Overview />} />
+        <Route path="/challenges" element={<Challenges />} />
       </Routes>
     </Router>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Overview from "./overview";
 
 const Home = () => {
   return (
@@ -19,7 +20,14 @@ const Home = () => {
         <FeatureCard title="To-Do" link="/todo" />
         <FeatureCard title="Habit Replacer" link="/habit-replacer" />
       </section>
+
+      <section>
+        <Overview />
+      </section>
     </div>
+    
+
+
   );
 };
 

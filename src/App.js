@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import MeditationGuide from "./pages/MeditationGuide";
 import TodoApp from "./pages/TodoApp";
 import HabitReplacer from "./components/HabitReplacer";
+import Overview from "./pages/overview";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/overview" element={<Overview />} />
       </Routes>
     </Router>
   );

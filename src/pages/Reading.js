@@ -10,7 +10,7 @@ const Reading = () => {
 
   // Fetch books from server
   useEffect(() => {
-    axios.get("http://localhost:5000/books").then((res) => setBooks(res.data));
+    axios.get("/api/books").then((res) => setBooks(res.data));
   }, []);
 
   // Upload book function
@@ -22,7 +22,8 @@ const Reading = () => {
     formData.append("book", selectedFile);
     formData.append("title", title);
 
-    await axios.post("http://localhost:5000/upload", formData);
+    axios.post("/api/upload", formData);
+
     setTitle("");
     setSelectedFile(null);
     window.location.reload(); // Refresh to show uploaded books
@@ -30,9 +31,10 @@ const Reading = () => {
 
   // Delete book function
   const deleteBook = async (id) => {
-    await axios.delete(`http://localhost:5000/books/${id}`);
+    await axios.delete(`/api/books/${id}`);
     setBooks(books.filter((book) => book._id !== id));
   };
+
 
   return (
     <div className={`p-6 min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"}`}>
@@ -74,9 +76,10 @@ const Reading = () => {
           <ul className="mt-3 space-y-2">
             {books.map((book) => (
               <li key={book._id} className="flex justify-between p-2 bg-gray-200 dark:bg-gray-700 rounded-md">
-                <a href={`http://localhost:5000/uploads/${book.filename}`} target="_blank" rel="noopener noreferrer">
+                <a href={`/api/uploads/${book.filename}`} target="_blank" rel="noopener noreferrer">
                   {book.title}
                 </a>
+
                 <button onClick={() => deleteBook(book._id)} className="text-red-500">
                   <Trash2 className="w-5 h-5" />
                 </button>

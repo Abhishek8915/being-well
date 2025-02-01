@@ -6,7 +6,7 @@ const Home = () => {
     <div>
       {/* Hero Section */}
       <section className="text-center bg-blue-500 text-white py-16">
-        <h1 className="text-4xl font-bold">Welcome to MyApp</h1>
+        <h1 className="text-4xl font-bold">Welcome to ZenFlow</h1>
         <p className="text-lg mt-2">Enhance your productivity and well-being</p>
       </section>
 

@@ -16,6 +16,7 @@ const Challenges = () => {
   const [progress, setProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [xp, setXp] = useState(0);
+  const [bookmarked, setBookmarked] = useState([]);
 
   const handleSelect = (challenge) => {
     setSelectedChallenge(challenge);
@@ -29,35 +30,59 @@ const Challenges = () => {
     setXp((prev) => prev + 50);
   };
 
+  const toggleBookmark = (challenge, e) => {
+    e.stopPropagation(); // Prevent triggering challenge selection
+    setBookmarked((prev) =>
+      prev.includes(challenge.id) ? prev.filter((id) => id !== challenge.id) : [...prev, challenge.id]
+    );
+  };
+
   return (
-    <div className="p-6 min-h-screen bg-white text-gray-900">
+    <div className="p-6 min-h-screen bg-gray-50 text-gray-900">
       <h1 className="text-3xl font-bold text-center text-[#2563eb] mb-6">Time Management Challenges</h1>
       
       {!selectedChallenge ? (
         <motion.div className="grid md:grid-cols-3 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {challenges.map((challenge) => (
-            <motion.div key={challenge.id} whileHover={{ scale: 1.05 }} className="bg-white p-6 border-2 border-[#2563eb] rounded-lg shadow-lg cursor-pointer transition-transform duration-300 ease-in-out transform hover:shadow-xl hover:border-blue-700 hover:-translate-y-2 flex flex-col justify-between" onClick={() => handleSelect(challenge)}>
+            <motion.div 
+              key={challenge.id} 
+              whileHover={{ scale: 1.05 }} 
+              className="bg-white p-6 border-2 border-[#2563eb] rounded-lg shadow-lg cursor-pointer transition-transform duration-300 ease-in-out transform hover:shadow-xl hover:border-blue-700 hover:-translate-y-2 flex flex-col justify-between relative"
+              onClick={() => handleSelect(challenge)}
+            >
               <div>
                 <h2 className="text-xl font-semibold text-[#2563eb]">{challenge.title}</h2>
                 <p className="text-sm mt-2 text-gray-700">{challenge.description}</p>
               </div>
-              <div className="mt-4 p-3 bg-[#2563eb] text-white rounded-md shadow-inner w-full">
+              <div className="mt-4 p-3 bg-[#2563eb] text-white rounded-md shadow-inner w-full flex flex-col items-center">
                 <p className="text-sm font-semibold">Duration: {challenge.duration}</p>
                 <p className="text-sm">Participants: {challenge.participants}</p>
+                <button 
+                  className={`mt-3 px-4 py-2 rounded-md text-white transition-all ${bookmarked.includes(challenge.id) ? 'bg-green-500 hover:bg-green-600' : 'bg-[#e5e7eb] hover:bg-[#d1d5db] text-gray-900'}`} 
+                  onClick={(e) => toggleBookmark(challenge, e)}
+                >
+                  {bookmarked.includes(challenge.id) ? "Bookmarked ✓" : "Bookmark"}
+                </button>
               </div>
             </motion.div>
           ))}
         </motion.div>
       ) : (
-        <div className="p-6 border-2 border-[#2563eb] rounded-lg shadow-lg flex flex-col justify-between min-h-[400px]">
-          <div>
-            <button className="mb-4 text-sm text-[#2563eb] underline" onClick={() => setSelectedChallenge(null)}>← Back</button>
-            <h2 className="text-2xl font-semibold text-[#2563eb]">{selectedChallenge.title}</h2>
-            <p className="mt-2">{selectedChallenge.description}</p>
-          </div>
-          <div className="mt-4 p-4 bg-[#2563eb] text-white rounded-md shadow-inner w-full fixed bottom-4 left-1/2 transform -translate-x-1/2">
+        <div className="p-6 border-2 border-[#2563eb] rounded-lg shadow-lg flex flex-col min-h-[400px]">
+          <button className="mb-4 text-sm text-[#2563eb] underline self-start" onClick={() => setSelectedChallenge(null)}>← Back</button>
+          <h2 className="text-2xl font-semibold text-[#2563eb]">{selectedChallenge.title}</h2>
+          <p className="mt-2 flex-grow">{selectedChallenge.description}</p>
+          <div className="mt-auto p-4 bg-[#2563eb] text-white rounded-md shadow-inner w-full">
             <p className="text-sm font-semibold">Duration: {selectedChallenge.duration}</p>
             <p className="text-sm">Participants: {selectedChallenge.participants}</p>
+          </div>
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold">Progress</h3>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+              <motion.div className="bg-[#2563eb] h-4 rounded-full" style={{ width: `${progress}%` }} animate={{ width: `${progress}%` }}></motion.div>
+            </div>
+            <p className="mt-2">{progress.toFixed(1)}% Completed</p>
+            <button className="mt-4 px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1e4bb8] transition-all" onClick={completeDay}>Complete Today's Task</button>
           </div>
         </div>
       )}

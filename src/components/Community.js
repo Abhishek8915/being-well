@@ -19,16 +19,16 @@ const Community = () => {
   const [commentingPostId, setCommentingPostId] = useState(null);
   const [commentText, setCommentText] = useState("");
 
-  // Fetch posts on load
+  // Fetch posts when component mounts
   useEffect(() => {
     fetchPosts();
-  }, [page]);
+  }, []);
 
   const fetchPosts = async () => {
     try {
       setLoadingMore(true);
       const res = await axios.get(`${API_BASE_URL}/posts?page=${page}`);
-      setPosts((prev) => [...prev, ...res.data]);
+      setPosts((prev) => [...prev, ...res.data]); // Append new posts for pagination
     } catch (err) {
       showNotification("Error fetching posts", "error");
     } finally {
@@ -36,14 +36,14 @@ const Community = () => {
     }
   };
 
-  // Handle post creation
+  // Handle creating a post
   const handlePost = async () => {
     if (!newPost.content.trim()) return;
     setIsPosting(true);
 
     try {
       const res = await axios.post(`${API_BASE_URL}/posts`, newPost);
-      setPosts([res.data, ...posts]);
+      setPosts([res.data, ...posts]); // Add new post to top
       setNewPost({ content: "", image: "", category: "Achievement" });
       setIsOpen(false);
       showNotification("Post created successfully!", "success");
@@ -54,7 +54,7 @@ const Community = () => {
     }
   };
 
-  // Handle like button
+  // Handle liking a post
   const handleLike = async (id) => {
     try {
       await axios.post(`${API_BASE_URL}/posts/${id}/like`);
@@ -88,6 +88,12 @@ const Community = () => {
     } catch (err) {
       showNotification("Error adding comment", "error");
     }
+  };
+
+  // Handle "Load More" button
+  const handleLoadMore = async () => {
+    setPage((prev) => prev + 1);
+    fetchPosts();
   };
 
   // Show notifications
@@ -164,60 +170,73 @@ const Community = () => {
 
       {/* Posts Feed */}
       <div className="max-w-2xl mx-auto p-4">
-        {posts
-          .sort((a, b) => b.likes - a.likes)
-          .map((post) => (
-            <motion.div
-              key={post._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-gray-800 p-4 my-4 rounded-lg shadow-lg"
-            >
-              <div className="flex items-center space-x-3 mb-2">
-                <div className="w-10 h-10 bg-gray-700 rounded-full"></div>
-                <span className="text-gray-300 text-sm">Anonymous</span>
-              </div>
-              <p className="text-white mb-2">{post.content}</p>
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt="Post"
-                  className="rounded mt-2 lazy-load"
+        {posts.map((post) => (
+          <motion.div
+            key={post._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-gray-800 p-4 my-4 rounded-lg shadow-lg"
+          >
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="w-10 h-10 bg-gray-700 rounded-full"></div>
+              <span className="text-gray-300 text-sm">Anonymous</span>
+            </div>
+            <p className="text-white mb-2">{post.content}</p>
+            {post.image && (
+              <img
+                src={post.image}
+                alt="Post"
+                className="rounded mt-2 lazy-load"
+              />
+            )}
+            <div className="text-gray-500 text-xs mt-2">
+              {new Date(post.createdAt).toLocaleString()}
+            </div>
+            <div className="flex items-center mt-3 space-x-4">
+              <button
+                onClick={() => handleLike(post._id)}
+                className="text-gray-400 hover:text-[#2563eb] flex items-center"
+              >
+                ❤️ {post.likes}
+              </button>
+              <button
+                onClick={() => setCommentingPostId(post._id)}
+                className="text-gray-400 hover:text-[#2563eb]"
+              >
+                💬 Comment
+              </button>
+            </div>
+            {commentingPostId === post._id && (
+              <div className="mt-3">
+                <input
+                  type="text"
+                  className="w-full p-2 bg-gray-700 rounded"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
                 />
-              )}
-              <div className="text-gray-500 text-xs mt-2">
-                {new Date(post.createdAt).toLocaleString()}
-              </div>
-              <div className="flex items-center mt-3 space-x-4">
                 <button
-                  onClick={() => handleLike(post._id)}
-                  className="text-gray-400 hover:text-[#2563eb] flex items-center"
+                  onClick={() => handleComment(post._id)}
+                  className="bg-[#2563eb] px-3 py-1 mt-2 rounded"
                 >
-                  ❤️ {post.likes}
-                </button>
-                <button
-                  onClick={() => setCommentingPostId(post._id)}
-                  className="text-gray-400 hover:text-[#2563eb]"
-                >
-                  💬 Comment
+                  Comment
                 </button>
               </div>
-              {post.comments && post.comments.length > 0 && (
-                <div className="mt-3 p-3 bg-gray-700 rounded">
-                  <h3 className="text-sm font-bold mb-2">Comments:</h3>
-                  {post.comments.map((comment, index) => (
-                    <div key={index} className="text-gray-300 text-sm mb-1">
-                      - {comment.text}{" "}
-                      <span className="text-gray-500 text-xs">
-                        ({new Date(comment.createdAt).toLocaleString()})
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ))}
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Load More Button */}
+      <div className="text-center my-6">
+        <button
+          className="bg-gray-700 px-4 py-2 rounded text-white"
+          onClick={handleLoadMore}
+          disabled={loadingMore}
+        >
+          {loadingMore ? "Loading..." : "Load More"}
+        </button>
       </div>
     </div>
   );

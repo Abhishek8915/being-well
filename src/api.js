@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.152.246:5000/api/tasks"; // Update with your backend URL
-
+const API_BASE_URL = "http://localhost:5000/api/tasks"; // Update with your backend URL
+// const API_BASE_URL = "http://192.168.152.246:5000/api/tasks";
 //Todo
 
 export const getTasks = async () => {
@@ -30,7 +30,9 @@ export const toggleTaskComplete = async (taskId, completed) => {
 
 //gratitue API
 
-const API_URL = "http://192.168.152.246:5000/api/gratitude";
+const API_URL = "http://localhost:5000/api/gratitude";
+// const API_URL = "http://192.168.152.246:5000/api/gratitude";
+
 
 export const fetchGratitudeEntries = async () => {
   try {

@@ -6,7 +6,6 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import GratitudeJournal from "./pages/GratitudeJournal";
 import PomodoroTimer from "./pages/PomodoroTimer";
-import ReportView from "./pages/ReportView";
 import Reading from "./pages/Reading";
 import Meditation from "./pages/Meditation";
 import CommunityPage from "./pages/CommunityPage";
@@ -28,7 +27,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/gratitude-journal" element={<GratitudeJournal />} />
         <Route path="/pomodoro-timer" element={<PomodoroTimer />} />
-        <Route path="/progress" element={<ReportView />} />
         <Route path="/reading" element={<Reading />} />
         <Route path="/meditation" element={<Meditation />} />
         <Route path="/meditation-guide" element={<MeditationGuide />} />
